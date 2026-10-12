@@ -1,0 +1,26 @@
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/**/*.pyc
+
+# ChromaDB
+backend/chroma_db/
+
+# Angular
+frontend/node_modules/
+frontend/.angular/
+frontend/dist/
+
+# VS Code
+.vscode/
+frontend/.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+# Logs
+*.log
+.env

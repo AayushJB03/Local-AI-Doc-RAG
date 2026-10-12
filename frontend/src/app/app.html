@@ -1,0 +1,170 @@
+<div class="container">
+
+  <h1>📄 AI Document Q&A Assistant</h1>
+
+  <!-- Upload Card -->
+  <div class="card">
+
+    <h2>📂 Upload Document</h2>
+
+    <input
+      type="file"
+      (change)="onFileSelected($event)"
+      accept=".pdf">
+
+    <br><br>
+
+    <button
+      (click)="uploadPdf()"
+      [disabled]="loading">
+
+      Upload PDF
+
+    </button>
+
+    <div
+      *ngIf="uploaded"
+      class="info">
+
+      <h3>✅ Uploaded Successfully</h3>
+
+      <p><strong>📄 File:</strong> {{ documentName }}</p>
+
+      <p><strong>📚 Total Chunks:</strong> {{ totalChunks }}</p>
+
+      <p *ngIf="characters>0">
+        <strong>📝 Characters:</strong> {{ characters }}
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- Question Card -->
+  <div class="card">
+
+    <h2>💬 Ask Question</h2>
+
+    <input
+      type="text"
+      [(ngModel)]="question"
+      placeholder="Ask anything about the uploaded document...">
+
+    <br><br>
+
+    <button
+      (click)="askQuestion()"
+      [disabled]="loading || !uploaded">
+
+      {{ loading ? '🤔 Thinking...' : '🚀 Ask' }}
+
+    </button>
+
+    <button
+      (click)="clearChat()">
+
+      🗑 Clear
+
+    </button>
+
+  </div>
+
+  <!-- Loading -->
+
+  <div
+    class="card"
+    *ngIf="loading">
+
+      <h2>Generating Answer...</h2>
+
+      <p>Please wait while Qwen analyzes your document.</p>
+
+  </div>
+
+  <!-- Answer -->
+
+  <div
+    class="card"
+    *ngIf="answer && !loading">
+
+      <h2>🤖 Answer</h2>
+
+      <div class="answer-box">
+
+        {{ answer }}
+
+      </div>
+
+  </div>
+
+  <!-- Sources -->
+
+  <div
+    class="card"
+    *ngIf="sources.length>0">
+
+      <h2>📚 Source References</h2>
+
+      <ul>
+
+        <li *ngFor="let source of sources">
+
+          📄 {{source.filename}}
+
+          <br>
+
+          <small>
+
+          Chunk {{source.chunk_number}}
+
+          </small>
+
+        </li>
+
+      </ul>
+
+  </div>
+
+  <!-- Conversation -->
+
+  <div
+    class="card"
+    *ngIf="chatHistory.length">
+
+      <h2>📝 Conversation History</h2>
+
+      <div
+        class="history"
+        *ngFor="let chat of chatHistory">
+
+        <p>
+
+          <strong>👤 You</strong>
+
+        </p>
+
+        <p>
+
+          {{chat.question}}
+
+        </p>
+
+        <p>
+
+          <strong>🤖 AI</strong>
+
+        </p>
+
+        <p>
+
+          {{chat.answer}}
+
+        </p>
+
+        <hr>
+
+      </div>
+
+  </div>
+
+</div>
