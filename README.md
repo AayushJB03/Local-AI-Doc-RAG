@@ -3,6 +3,8 @@
 Upload a PDF, ask questions in plain English, and get answers grounded in the document, with source chunk references. Everything runs on your machine: embeddings, vector search and the LLM (Qwen3 4B via Ollama). No document data is sent to a cloud API.
 
 ![App screenshot](docs/screenshot.png)
+<img width="720" height="931" alt="image" src="https://github.com/user-attachments/assets/c0c1baf4-0f55-4421-ac1d-0f114b8d39af" />
+
 
 ## System Architecture
 
