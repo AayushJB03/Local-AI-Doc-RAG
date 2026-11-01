@@ -115,6 +115,7 @@ this.question = "";
   }
 
   this.uploaded = true;
+  this.cdr.detectChanges();
 
   alert("PDF uploaded successfully!");
 
