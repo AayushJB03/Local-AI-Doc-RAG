@@ -48,7 +48,7 @@ Goal: call RAG from Python without HTTP, with every knob as a parameter.
 
 Goal: 100 real questions with gold answers. Quality here decides whether the whole project is credible.
 
-- [ ] Pick **3-5 documents** you can legally publish in the repo (public papers, government reports, open docs). Put them in `eval/docs/`. Mix: one dense technical paper, one with tables, one long report.
+- [x] Pick **3-5 documents** you can legally publish in the repo (public papers, government reports, open docs). Put them in `eval/docs/`. Mix: one dense technical paper, one with tables, one long report.
 - [ ] Write **~100 questions** by hand (LLM-drafted questions are OK as a starting point but you must read and fix each). Mix on purpose:
   - ~50 factual lookup ("What is the learning rate used?")
   - ~20 multi-chunk / synthesis ("Compare method A and B")
