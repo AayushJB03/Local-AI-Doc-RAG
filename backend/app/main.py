@@ -1,12 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-import ollama
-import time
 from app.session_store import sessions
 from app.upload import router as upload_router
-from app.vector_store import retrieve_chunks
-from app.embedding_model import model
+from app.rag import ask
 from app.document_state import current_document
 from app.error_handler import global_exception_handler
 
@@ -65,93 +62,18 @@ class ChatRequest(BaseModel):
 # -----------------------------
 @app.post("/chat")
 def chat(request: ChatRequest):
+    history = sessions.get(request.session_id, [])[-5:]
 
-    # -------------------------
-    # Step 1: Generate Embedding
-    # -------------------------
-    start = time.time()
+    result = ask(request.question, history=history)
+    print(f"Latency ms: {result['latency_ms']} Tokens: {result['tokens']}")
 
-    query_embedding = model.encode(
-        request.question
-    ).tolist()
-
-    print(f"Embedding Time: {time.time() - start:.3f} seconds")
-
-    # -------------------------
-    # Step 2: Retrieve Chunks
-    # -------------------------
-    start = time.time()
-
-    retrieval_result = retrieve_chunks(query_embedding)
-
-    print(f"Retrieval Time: {time.time() - start:.3f} seconds")
-
-    retrieved_chunks = retrieval_result["documents"]
-    retrieved_metadata = retrieval_result["metadata"]
-
-    context = "\n\n".join(retrieved_chunks)
-    
-    history = sessions.get(request.session_id, [])
-    history = history[-5:]
-    conversation = ""
-
-    for msg in history:
-        conversation += f"""
-User: {msg['question']}
-Assistant: {msg['answer']}
-"""
-    # -------------------------
-    # Step 3: Prompt
-    # -------------------------
-    prompt = f"""
-You are a document question-answering assistant.
-
-Use the previous conversation if it helps answer follow-up questions.
-
-Previous Conversation:
-{conversation}
-
-Context:
-{context}
-
-Current Question:
-{request.question}
-
-Answer:
-"""
-
-    # -------------------------
-    # Step 4: LLM
-    # -------------------------
-    start = time.time()
-
-    response = ollama.chat(
-        model="qwen3:4b",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a document question-answering assistant."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        options={"num_ctx": 8192}  # default context is huge -> 16GB KV cache OOM
-    )
-
-    print(f"LLM Time: {time.time() - start:.3f} seconds")
-
-    # -------------------------
-    # Step 5: Return Response
-    # -------------------------
     history.append({
-    "question": request.question,
-    "answer": response["message"]["content"]
-})
-
+        "question": request.question,
+        "answer": result["answer"]
+    })
     sessions[request.session_id] = history
+
     return {
-        "answer": response["message"]["content"],
-        "sources": retrieved_metadata
+        "answer": result["answer"],
+        "sources": result["metadata"]
     }
