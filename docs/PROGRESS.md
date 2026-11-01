@@ -14,3 +14,9 @@ Not working / caveats found:
 - **Page text is joined with no separator** (`text += extracted`), so words can fuse across page breaks. Kept as-is for the baseline; fix is a candidate E9 item.
 - `answer()` token counts come from `ollama.chat`; `total_duration` is not captured yet (wall time is).
 - No real PDFs and no eval set exist yet (Phase 1). Smoke test used a one-sentence generated PDF.
+
+## Phase 2 (partial): retrieval metrics
+Done: `eval/metrics.py` (evidence-quote hit, hit@k, MRR, percentiles) with a self-check (`python eval/metrics.py`).
+Bug caught by the self-check: fuzzy matching (ratio > 0.9) scored "0.004" as a hit for "0.003". Fixed by requiring numbers to match exactly. Without this, numeric questions would have inflated hit rate.
+Not done: harness (`run_eval.py`), LLM judge, and the questions themselves. Blocked on Phase 1: need 3-5 publishable documents from you.
+From the reference PDFs, added to the plan: report TTFT (needs streaming), faithfulness separately from correctness, judge biases (verbosity/self-preference; the answerer and judge must be different models).
